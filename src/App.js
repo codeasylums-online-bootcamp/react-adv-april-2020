@@ -1,20 +1,19 @@
-import React from 'react'
-import {createStore} from 'redux';
+import React,{useReducer} from 'react'
 
-// import Parent from './components/Parent'
 import Main from './components/Main'
-import {Provider} from 'react-redux'
-import reducer from './reducer'
-
-const store = createStore(reducer)
+import reducer,{defaultState} from './reducer'
+import {storeContext} from './context'
 
 function App() {
+
+  const [store, dispatch] = useReducer(reducer, defaultState);
+
   return (
     <div style={{margin:"100px"}}>
       {/* <Parent/> */}
-      <Provider store={store}>
+      <storeContext.Provider value={{store:store, dispatch:dispatch}}>
         <Main />
-      </Provider>
+      </storeContext.Provider>
     </div>
   );
 }

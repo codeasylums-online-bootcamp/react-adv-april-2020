@@ -1,23 +1,26 @@
-import React,{Component} from 'react'
+import React,{useContext} from 'react'
 
 import {deleteItem} from '../actions'
+import {storeContext} from '../context'
 
-import {connect} from 'react-redux'
+function Item(props) {
 
-class Item extends Component {
+    const context = useContext(storeContext)
 
-    handleDeleteItem  = () => {
-        const {itemIdx, listIdx} = this.props
-        this.props.deleteItem(listIdx,itemIdx)
+    const handleDeleteItem  = () => {
+        const {itemIdx, listIdx} = props
+        const {dispatch} = context;
+        // console.log(deleteItem(listIdx,itemIdx));
+        dispatch(deleteItem(listIdx,itemIdx));
     }
-    render(){
-        const {item} = this.props
+   
+        const {item} = props
             return(
                 <div>
-                    {item}<button onClick={this.handleDeleteItem}>Delete item</button>
+                    {item}<button onClick={handleDeleteItem}>Delete item</button>
                 </div>
             );
         }
-    }
+    
 
-export default connect(null,{deleteItem})(Item)
+export default Item;

@@ -1,47 +1,42 @@
-import React, { Component } from 'react'
+import React, { useState, useContext } from 'react'
 
 import Item from './Items'
 
 import {deleteList, addItem} from '../actions'
+import {storeContext} from '../context'
 
-import {connect} from 'react-redux'
+function List(props){
+    const [state, setState] = useState({newItemName:"",})
+    const context = useContext(storeContext);
 
-class List extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            newItemName:"",
-        };
+    const handleChange = (e) => {
+        setState({newItemName:e.target.value})
     }
 
-    handleChange = (e) => {
-        this.setState({newItemName:e.target.value})
-    }
-
-    handleAddNewItem = () => {
-        const {newItemName} = this.state
-        const {idx} = this.props
+    const handleAddNewItem = () => {
+        const {newItemName} = state;
+        const {idx} = props;
+        const {dispatch} = context;
         // this.setState({newItemName:""})
         // this.props.addItem(idx, newItemName);
-        this.setState({newItemName:""})
-        this.props.addItem(idx, newItemName)
+        setState({newItemName:""});
+        dispatch(addItem(idx, newItemName));
     }
 
-    handleListDelete = (idx) => {
-        this.props.deleteList(idx);
+    const handleListDelete = (idx) => {
+        const {dispatch} = context;
+        dispatch(deleteList(idx));
     }
 
-    render(){
-        const {name, idx, items} = this.props
-        const {newItemName} = this.state
+        const {name, idx, items} = props
+        const {newItemName} = state
         return(
             <div>
-                {name}<button onClick={()=> this.handleListDelete(idx)}>Delete List</button><br/>
-                <input type="text" value={newItemName} onChange={this.handleChange}/> <button onClick={this.handleAddNewItem}>Add Item</button>
+                {name}<button onClick={()=> handleListDelete(idx)}>Delete List</button><br/>
+                <input type="text" value={newItemName} onChange={handleChange}/> <button onClick={handleAddNewItem}>Add Item</button>
                 {items.map((item, itemIdx) => <Item key={item} item={item} listIdx={idx} itemIdx={itemIdx}/>)}
             </div>
         );
-    }
 }
 
-export default connect(null,{addItem,deleteList})(List);
+export default List;

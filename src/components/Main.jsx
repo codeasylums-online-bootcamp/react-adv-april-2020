@@ -1,60 +1,42 @@
-import React, {Component} from 'react'
+import React, {useState,useContext} from 'react'
 
 import List from './List'
 
 import {createList} from '../actions'
+import {storeContext} from '../context'
 
-import {connect} from 'react-redux'
+function Main(props) {
 
-class Main extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            newListName: "",
-        }
+    const context = useContext(storeContext);
+    const [state, setState] = useState({ newListName: ""})
+
+    const handleNewListNameChange = (e) => {
+        setState({...state, newListName:e.target.value})
     }
 
-    handleNewListNameChange = (e) => {
-        this.setState({...this.state, newListName:e.target.value})
-    }
-
-    handleClick = () => {
-        const {newListName} = this.state
+    const handleClick = () => {
+        const {newListName} = state
+        const {dispatch} = context
         if (newListName) {
-            // let newLists = [...this.state.lists,{listName:newListName, items:[]}]
-            this.setState({newListName:""})
-            this.props.createList(newListName)
+            setState({newListName:""})
+            dispatch(createList(newListName));
         }
     }
     
-    render(){
-        // if(jwt.length>0){ 0
-        //     react router and routes are added for pages after login
-        //     '/' => timeline
-        // } else {
-        //     react router and routes are added for pages before login
-        //     '/' => login page
-        // }
-        const {lists} = this.props
-        return(
-            <div>
-                <input type="text" value={this.state.newListName} onChange={this.handleNewListNameChange}/> <button onClick={this.handleClick}>Create List</button>
-                {lists.map((list,idx)=> <List {...list} 
-                    idx={idx} 
-                    key={list.name}  />)}
-                <button onClick={()=>{/*doingsomething*/}}>Submit</button>
-            </div>
-        );
-    }
+
+    const {lists} = context.store
+    return(
+        <div>
+            <input type="text" value={state.newListName} onChange={handleNewListNameChange}/> <button onClick={handleClick}>Create List</button>
+            {lists.map((list,idx)=> <List {...list} 
+                idx={idx} 
+                key={list.name}  />)}
+            <button onClick={()=>{/*doingsomething*/}}>Submit</button>
+        </div>
+    );
 }
 
-const mapStateToProps = (state) => {
-    return {
-        lists:state.lists
-    };
-}
-
-export default connect(mapStateToProps,{createList})(Main)
+export default Main;
 
 
 // login
